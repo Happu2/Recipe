@@ -354,7 +354,7 @@ export const RecipeManager = {
                 prepTime: 20,
                 cookTime: 25,
                 difficulty: "medium",
-                imageUrl: "https://images.unsplash.com/photo-1604908177522-6b1c68b7a0b4?auto=format&fit=crop&w=600&q=80"
+                imageUrl: "https://myfoodstory.com/wp-content/uploads/2021/07/Paneer-Butter-Masala-3.jpg"
             },
             {
                 id: 'chicken-tikka-masala',
@@ -384,33 +384,7 @@ export const RecipeManager = {
                 difficulty: "medium",
                 imageUrl: "https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=600&q=80"
             },
-            {
-                id: 'veggie-quinoa-salad',
-                title: "Veggie Quinoa Salad",
-                description: "A light, protein-packed salad with quinoa, fresh vegetables, and a lemony dressing—great for meal prep.",
-                ingredients: [
-                    "1 cup quinoa, rinsed",
-                    "2 cups water or vegetable broth",
-                    "1 cucumber, diced",
-                    "1 bell pepper, diced",
-                    "1/2 red onion, finely chopped",
-                    "1 cup cherry tomatoes, halved",
-                    "1/4 cup chopped parsley",
-                    "Juice of 1 lemon",
-                    "2 tbsp olive oil",
-                    "Salt and pepper to taste"
-                ],
-                steps: [
-                    "Cook quinoa in water or broth according to package directions; let cool.",
-                    "Combine cooled quinoa with chopped vegetables and parsley.",
-                    "Whisk lemon juice, olive oil, salt, and pepper; toss with salad.",
-                    "Chill for 15 minutes before serving for best flavor."
-                ],
-                prepTime: 15,
-                cookTime: 15,
-                difficulty: "easy",
-                imageUrl: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=600&q=80"
-            },
+            
             {
                 id: 'chocolate-banana-bread',
                 title: "Chocolate Banana Bread",
@@ -436,7 +410,7 @@ export const RecipeManager = {
                 prepTime: 15,
                 cookTime: 55,
                 difficulty: "easy",
-                imageUrl: "https://images.unsplash.com/photo-1601924582975-6f7acb0b3c2b?auto=format&fit=crop&w=600&q=80"
+                imageUrl: "https://bakingamoment.com/wp-content/uploads/2021/02/IMG_0023-chocolate-banana-bread.jpg"
             }
         ];
     },
