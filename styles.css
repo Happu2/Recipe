@@ -380,6 +380,29 @@ input, select, textarea {
     transition: all 0.3s ease;
 }
 
+/* Time inputs (hours/minutes) */
+.time-inputs {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.time-inputs input[type="number"] {
+    width: 90px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    border: 2px solid rgba(139, 95, 191, 0.12);
+    text-align: center;
+}
+.time-inputs input[type="number"]:focus {
+    border-color: var(--primary-color);
+}
+
+@media (max-width: 480px) {
+    .time-inputs { flex-direction: row; gap: 8px; }
+    .time-inputs input[type="number"] { width: 60px; padding: 8px; }
+}
+
 input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: var(--primary-color);

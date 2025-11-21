@@ -62,6 +62,29 @@ export const RecipeManager = {
             input.addEventListener('input', () => {
                 // Clear error when user starts typing
                 const errorElement = document.getElementById(`${input.id}-error`);
+                // Support hours/minutes inputs for prep and cook time: clear and validate proxy field
+                const timeFields = ['prep', 'cook'];
+                timeFields.forEach(prefix => {
+                    const hours = document.getElementById(`${prefix}-hours`);
+                    const minutes = document.getElementById(`${prefix}-minutes`);
+                    const proxyError = document.getElementById(`${prefix}-time-error`);
+
+                    if (hours) {
+                        hours.addEventListener('input', () => {
+                            if (proxyError) proxyError.style.display = 'none';
+                            hours.style.borderColor = 'rgba(139, 95, 191, 0.2)';
+                        });
+                        hours.addEventListener('blur', () => this.validateField({ id: `${prefix}-time` }));
+                    }
+                    if (minutes) {
+                        minutes.addEventListener('input', () => {
+                            if (proxyError) proxyError.style.display = 'none';
+                            minutes.style.borderColor = 'rgba(139, 95, 191, 0.2)';
+                        });
+                        minutes.addEventListener('blur', () => this.validateField({ id: `${prefix}-time` }));
+                    }
+                });
+
                 if (errorElement) {
                     errorElement.style.display = 'none';
                     input.style.borderColor = 'rgba(139, 95, 191, 0.2)';
@@ -147,26 +170,33 @@ export const RecipeManager = {
                     break;
                     
                 case 'prep-time':
-                    if (!field.value || isNaN(field.value)) {
+                    // Read from hours/minutes inputs if present
+                    const ph = parseInt((document.getElementById('prep-hours') || { value: 0 }).value) || 0;
+                    const pm = parseInt((document.getElementById('prep-minutes') || { value: 0 }).value) || 0;
+                    const totalPrep = ph * 60 + pm;
+                    if (isNaN(totalPrep)) {
                         errorMessage = 'Prep time must be a valid number';
                         isValid = false;
-                    } else if (parseInt(field.value) < 0) {
-                        errorMessage = 'Prep time cannot be negative';
+                    } else if (totalPrep <= 0) {
+                        errorMessage = 'Prep time must be at least 1 minute';
                         isValid = false;
-                    } else if (parseInt(field.value) > 1440) {
+                    } else if (totalPrep > 1440) {
                         errorMessage = 'Prep time cannot exceed 24 hours (1440 minutes)';
                         isValid = false;
                     }
                     break;
                     
                 case 'cook-time':
-                    if (!field.value || isNaN(field.value)) {
+                    const ch = parseInt((document.getElementById('cook-hours') || { value: 0 }).value) || 0;
+                    const cm = parseInt((document.getElementById('cook-minutes') || { value: 0 }).value) || 0;
+                    const totalCook = ch * 60 + cm;
+                    if (isNaN(totalCook)) {
                         errorMessage = 'Cook time must be a valid number';
                         isValid = false;
-                    } else if (parseInt(field.value) < 0) {
+                    } else if (totalCook < 0) {
                         errorMessage = 'Cook time cannot be negative';
                         isValid = false;
-                    } else if (parseInt(field.value) > 1440) {
+                    } else if (totalCook > 1440) {
                         errorMessage = 'Cook time cannot exceed 24 hours (1440 minutes)';
                         isValid = false;
                     }
@@ -575,7 +605,7 @@ export const RecipeManager = {
                         <div class="card-content">
                             <h3 class="card-title">${this.escapeHtml(recipe.title)}</h3>
                             <div class="card-meta">
-                                <span>${totalTime} min</span>
+                                        <span>${this.formatDuration(totalTime)}</span>
                                 <span class="difficulty difficulty-${recipe.difficulty || 'easy'}">
                                     ${this.escapeHtml((recipe.difficulty || 'easy').charAt(0).toUpperCase() + (recipe.difficulty || 'easy').slice(1))}
                                 </span>
@@ -608,6 +638,18 @@ export const RecipeManager = {
             .replace(/>/g, "&gt;")
             .replace(/\"/g, "&quot;")
             .replace(/'/g, "&#039;");
+    },
+
+    // Format minutes into human readable hours/minutes
+    formatDuration: function(totalMinutes) {
+        const mins = parseInt(totalMinutes, 10) || 0;
+        if (mins <= 0) return '0m';
+        if (mins < 60) return `${mins}m`;
+
+        const hours = Math.floor(mins / 60);
+        const remainder = mins % 60;
+        if (remainder === 0) return `${hours}h`;
+        return `${hours}h ${remainder}m`;
     },
     
     // Attach event listeners to recipe cards
@@ -656,15 +698,15 @@ export const RecipeManager = {
                     <div class="recipe-meta">
                         <div class="meta-item">
                             <span class="meta-label">Prep Time</span>
-                            <span class="meta-value">${recipe.prepTime || 0} min</span>
+                            <span class="meta-value">${this.formatDuration(recipe.prepTime || 0)}</span>
                         </div>
                         <div class="meta-item">
                             <span class="meta-label">Cook Time</span>
-                            <span class="meta-value">${recipe.cookTime || 0} min</span>
+                            <span class="meta-value">${this.formatDuration(recipe.cookTime || 0)}</span>
                         </div>
                         <div class="meta-item">
                             <span class="meta-label">Total Time</span>
-                            <span class="meta-value">${totalTime} min</span>
+                            <span class="meta-value">${this.formatDuration(totalTime)}</span>
                         </div>
                         <div class="meta-item">
                             <span class="meta-label">Difficulty</span>
@@ -737,6 +779,17 @@ export const RecipeManager = {
             document.querySelectorAll('input, textarea, select').forEach(field => {
                 field.style.borderColor = 'rgba(139, 95, 191, 0.2)';
             });
+
+            // Reset hours/minutes inputs
+            const timeFields = ['prep', 'cook'];
+            timeFields.forEach(prefix => {
+                const h = document.getElementById(`${prefix}-hours`);
+                const m = document.getElementById(`${prefix}-minutes`);
+                const hidden = document.getElementById(`${prefix}-time`);
+                if (h) h.value = '';
+                if (m) m.value = '';
+                if (hidden) hidden.value = '';
+            });
             
             this.showView('form');
         } catch (error) {
@@ -763,8 +816,25 @@ export const RecipeManager = {
             document.getElementById('description').value = recipe.description || '';
             document.getElementById('ingredients').value = (recipe.ingredients || []).join('\n');
             document.getElementById('steps').value = (recipe.steps || []).join('\n');
-            document.getElementById('prep-time').value = recipe.prepTime || 0;
-            document.getElementById('cook-time').value = recipe.cookTime || 0;
+            // Populate hours/minutes and hidden total fields
+            const prep = recipe.prepTime || 0;
+            const cook = recipe.cookTime || 0;
+            const ph = Math.floor(prep / 60);
+            const pm = prep % 60;
+            const ch = Math.floor(cook / 60);
+            const cm = cook % 60;
+            const prepHEl = document.getElementById('prep-hours');
+            const prepMEl = document.getElementById('prep-minutes');
+            const cookHEl = document.getElementById('cook-hours');
+            const cookMEl = document.getElementById('cook-minutes');
+            const prepHidden = document.getElementById('prep-time');
+            const cookHidden = document.getElementById('cook-time');
+            if (prepHEl) prepHEl.value = ph || '';
+            if (prepMEl) prepMEl.value = pm || '';
+            if (cookHEl) cookHEl.value = ch || '';
+            if (cookMEl) cookMEl.value = cm || '';
+            if (prepHidden) prepHidden.value = prep;
+            if (cookHidden) cookHidden.value = cook;
             document.getElementById('difficulty').value = recipe.difficulty || 'easy';
             document.getElementById('image-url').value = recipe.imageUrl || '';
             
@@ -811,8 +881,19 @@ export const RecipeManager = {
                 steps: document.getElementById('steps').value.split('\n')
                     .filter(line => line.trim())
                     .map(line => line.trim()),
-                prepTime: parseInt(document.getElementById('prep-time').value) || 0,
-                cookTime: parseInt(document.getElementById('cook-time').value) || 0,
+                // Compute minutes from hours+minutes inputs (fallback to hidden fields)
+                prepTime: (function(){
+                    const ph = parseInt((document.getElementById('prep-hours') || { value: 0 }).value) || 0;
+                    const pm = parseInt((document.getElementById('prep-minutes') || { value: 0 }).value) || 0;
+                    const total = ph * 60 + pm;
+                    return total;
+                })(),
+                cookTime: (function(){
+                    const ch = parseInt((document.getElementById('cook-hours') || { value: 0 }).value) || 0;
+                    const cm = parseInt((document.getElementById('cook-minutes') || { value: 0 }).value) || 0;
+                    const total = ch * 60 + cm;
+                    return total;
+                })(),
                 difficulty: document.getElementById('difficulty').value || 'easy',
                 imageUrl: document.getElementById('image-url').value.trim()
             };
