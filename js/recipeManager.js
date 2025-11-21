@@ -356,34 +356,6 @@ export const RecipeManager = {
                 difficulty: "medium",
                 imageUrl: "https://myfoodstory.com/wp-content/uploads/2021/07/Paneer-Butter-Masala-3.jpg"
             },
-            {
-                id: 'chicken-tikka-masala',
-                title: "Chicken Tikka Masala",
-                description: "Tender marinated chicken pieces in a spiced tomato-cream sauce—an all-time favorite.",
-                ingredients: [
-                    "500g boneless chicken, cubed",
-                    "1/2 cup yogurt",
-                    "1 tbsp tikka masala spice or garam masala",
-                    "2 tbsp oil",
-                    "1 onion, chopped",
-                    "2 tomatoes, pureed",
-                    "1/2 cup cream",
-                    "1 tbsp ginger-garlic paste",
-                    "Salt to taste",
-                    "Fresh cilantro for garnish"
-                ],
-                steps: [
-                    "Marinate chicken in yogurt and spices for at least 30 minutes or overnight.",
-                    "Sear or grill the marinated chicken until cooked through and set aside.",
-                    "Sauté onions, add ginger-garlic paste, then add tomato puree and simmer.",
-                    "Stir in cream, add the chicken, and simmer 8-10 minutes for flavors to meld.",
-                    "Garnish with cilantro and serve with rice or flatbread."
-                ],
-                prepTime: 30,
-                cookTime: 40,
-                difficulty: "medium",
-                imageUrl: "https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=600&q=80"
-            },
             
             {
                 id: 'chocolate-banana-bread',
